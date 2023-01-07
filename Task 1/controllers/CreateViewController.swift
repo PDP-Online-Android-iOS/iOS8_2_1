@@ -7,7 +7,11 @@
 
 import UIKit
 
-class CreateViewController: UIViewController {
+class CreateViewController: BaseViewController {
+    
+    // MARK: - Outlets
+    @IBOutlet weak var etName: UITextField!
+    @IBOutlet weak var etNumber: UITextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,15 +19,39 @@ class CreateViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
+    // MARK: - Methods
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func initViews() {
+        initNavigation()
     }
-    */
+    
+    func initNavigation() {
+        title = "Create Contact"
+    }
+    
+    // MARK: - API Calls
+    
+    func apiSaveContact(name: String, number: String) {
+        showProgress()
+        Network.post(url: Network.API_CONTACT_CREATE, params: Network.paramsPostCreate(contact: Contact(id: "", name: name, number: number)), handler: { response in
+            self.hideProgress()
+            switch response.result {
+            case .success(let data):
+                print(data)
+                self.navigationController?.popViewController(animated: true)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        })
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func onSaveClick(_ sender: Any) {
+        if !etName.text!.isEmpty && !etNumber.text!.isEmpty {
+            apiSaveContact(name: etName.text!, number: etNumber.text!)
+        }
+    }
+    
 
 }

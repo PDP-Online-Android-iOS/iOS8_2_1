@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Outlets
     
@@ -21,6 +21,36 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         initViews()
         
     }
+    
+    // MARK: - API Calls
+    
+    func apiContactList() {
+        showProgress()
+        Network.get(url: Network.API_CONTACT_LIST, params: Network.paramsEmpty(), handler: { response in
+            self.hideProgress()
+            switch response.result {
+                case .success:
+                    let contacts = try! JSONDecoder().decode([Contact].self, from: response.data!)
+                    self.refreshTableView(contacts: contacts)
+                case .failure(let error):
+                    print(error.localizedDescription)
+            }
+        })
+    }
+    
+    func apiContactDelete(contact: Contact) {
+        showProgress()
+        Network.del(url: Network.API_CONTACT_DELETE + contact.id, params: Network.paramsEmpty(), handler: { response in
+            self.hideProgress()
+            switch response.result {
+                case .success(let data):
+                    print(data)
+                    self.apiContactList()
+                case .failure(let error):
+                    print(error.localizedDescription)
+            }
+        })
+    }
 
 
     // MARK: - Methods
@@ -32,15 +62,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         initNavigation()
         
-        items.append(Contact(id: 1, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 2, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 3, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 4, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 5, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 6, name: "Ogabek", number: "+998 93 203 73 13"))
-        items.append(Contact(id: 7, name: "Ogabek", number: "+998 93 203 73 13"))
+        apiContactList()
         
     }
+    
+    func refreshTableView(contacts: [Contact]) {
+        self.items = contacts
+        self.tableView.reloadData()
+    }
+    
     
     func initNavigation() {
         let refresh = UIImage(systemName: "arrow.triangle.2.circlepath")
@@ -48,7 +78,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: refresh, style: .plain, target: self, action: #selector(leftTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: add, style: .plain, target: self, action: #selector(rightTapped))
-        title = "MVC Pattern"
+        title = "Storyboard MVC"
     }
     
     func callCreateViewController() {
@@ -56,8 +86,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func callEditViewController() {
+    func callEditViewController(contact: Contact) {
         let vc = EditViewController(nibName: "EditViewController", bundle: nil)
+        vc.contact = contact
         let navigationController = UINavigationController(rootViewController: vc)
         self.present(navigationController, animated: true, completion: nil)
     }
@@ -65,7 +96,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: - Actions
     
     @objc func leftTapped() {
-        
+        apiContactList()
     }
     
     @objc func rightTapped() {
@@ -107,7 +138,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return UIContextualAction(style: .normal, title: "Edit") { (action, swipeButtonView, completion) in
             print("Edit")
             completion(true)
-            self.callEditViewController()
+            self.callEditViewController(contact: contact)
         }
     }
     
@@ -115,6 +146,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return UIContextualAction(style: .destructive, title: "Delete") { (action, swipeButtonView, completion) in
             print("Delete")
             completion(true)
+            self.apiContactDelete(contact: contact)
         }
     }
     

@@ -8,7 +8,7 @@
 import Foundation
 
 struct Contact: Decodable {
-    var id: Int
+    var id: String
     var name: String
     var number: String
 }
