@@ -7,13 +7,23 @@
 
 import UIKit
 
-class CreateViewController: BaseViewController, CreateView {
+protocol CreateRequestProtocol {
+    func apiContactCreate(name: String, number: String)
+    
+    func navigateHomeScreen()
+}
+
+protocol CreateResponseProtocol {
+    func onContactCreated(created: Bool)
+}
+
+class CreateViewController: BaseViewController, CreateResponseProtocol {
     
     // MARK: - Outlets
     @IBOutlet weak var etName: UITextField!
     @IBOutlet weak var etNumber: UITextField!
     
-    var presenter: CreatePresenter!
+    var presenter: CreateRequestProtocol!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +37,29 @@ class CreateViewController: BaseViewController, CreateView {
     func initViews() {
         initNavigation()
         
-        presenter = CreatePresenter()
-        presenter.view = self
-        presenter.controller = self
+        configureViper()
 
+    }
+    
+    func configureViper() {
+        let manager = HttpManager()
+        let presenter = CreatePresenter()
+        let interactor = CreateInteractor()
+        let routing = CreateRouting()
+        
+        presenter.controller = self
+        
+        self.presenter = presenter
+        presenter.interactor = interactor
+        presenter.routing = routing
+        routing.viewController = self
+        interactor.manager = manager
+        interactor.response = self
+        
+    }
+    
+    func callHomeController() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     func initNavigation() {
@@ -39,7 +68,7 @@ class CreateViewController: BaseViewController, CreateView {
     
     // MARK: - API Calls
     
-    func onCreateContact(created: Bool) {
+    func onContactCreated(created: Bool) {
         if created {
             self.navigationController?.popViewController(animated: true)
         } else {
@@ -52,7 +81,7 @@ class CreateViewController: BaseViewController, CreateView {
     
     @IBAction func onSaveClick(_ sender: Any) {
         if !etName.text!.isEmpty && !etNumber.text!.isEmpty {
-            self.presenter.apiCreateContact(name: etName.text!, number: etNumber.text!)
+            self.presenter.apiContactCreate(name: etName.text!, number: etNumber.text!)
         }
     }
     

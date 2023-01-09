@@ -7,12 +7,25 @@
 
 import UIKit
 
-class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource, HomeView {
+protocol HomeRequestProtocol {
+    func apiContactList()
+    func apiContactDelete(contact: Contact)
+    
+    func navigateCreateScreen()
+    func navigateEditScreen(contact: Contact)
+}
+
+protocol HomeResponseProtocol {
+    func onContactList(contacts: [Contact])
+    func onContactDelete(deleted: Bool)
+}
+
+class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource, HomeResponseProtocol {
     
     // MARK: - Outlets
     
     @IBOutlet weak var tableView: UITableView!
-    var presenter: HomePresenter!
+    var presenter: HomeRequestProtocol!
     
     var items: Array<Contact> = Array()
     
@@ -25,7 +38,8 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - API Calls
     
-    func onLoadContacts(contacts: [Contact]) {
+    func onContactList(contacts: [Contact]) {
+        hideProgress()
         if contacts.count > 0 {
             refreshTableView(contacts: contacts)
         } else {
@@ -33,7 +47,8 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
-    func onDeleteContact(deleted: Bool) {
+    func onContactDelete(deleted: Bool) {
+        hideProgress()
         if deleted {
             presenter.apiContactList()
         } else {
@@ -50,12 +65,25 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         tableView.delegate = self
         
         initNavigation()
+        configureViper()
+        presenter.apiContactList()
         
-        presenter = HomePresenter()
-        presenter.homeView = self
+    }
+    
+    func configureViper() {
+        let manager = HttpManager()
+        let presenter = HomePresenter()
+        let interactor = HomeInteractor()
+        let routing = HomeRouting()
+        
         presenter.controller = self
         
-        presenter.apiContactList()
+        self.presenter = presenter
+        presenter.interactor = interactor
+        presenter.routing = routing
+        routing.viewController = self
+        interactor.manager = manager
+        interactor.response = self
         
     }
     
