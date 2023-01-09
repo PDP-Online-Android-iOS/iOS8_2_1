@@ -24,6 +24,12 @@
 		64965A54296850FA001A077D /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64965A53296850FA001A077D /* Contact.swift */; };
 		64965A57296851AC001A077D /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64965A55296851AC001A077D /* ContactTableViewCell.swift */; };
 		64965A58296851AC001A077D /* ContactTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64965A56296851AC001A077D /* ContactTableViewCell.xib */; };
+		64E335BE296BE1A4001E2EBC /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335BD296BE1A4001E2EBC /* HomeView.swift */; };
+		64E335C0296BE1B0001E2EBC /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335BF296BE1B0001E2EBC /* HomePresenter.swift */; };
+		64E335C4296BED88001E2EBC /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335C3296BED88001E2EBC /* EditView.swift */; };
+		64E335C6296BEDE7001E2EBC /* EditPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335C5296BEDE7001E2EBC /* EditPresenter.swift */; };
+		64E335CA296BF355001E2EBC /* CreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335C9296BF355001E2EBC /* CreateView.swift */; };
+		64E335CC296BF394001E2EBC /* CreatePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E335CB296BF394001E2EBC /* CreatePresenter.swift */; };
 		9D98C6D232EA254414E37F0F /* Pods_Task_1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02434A0FD9678C9B5722618B /* Pods_Task_1.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +55,12 @@
 		64965A53296850FA001A077D /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		64965A55296851AC001A077D /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		64965A56296851AC001A077D /* ContactTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactTableViewCell.xib; sourceTree = "<group>"; };
+		64E335BD296BE1A4001E2EBC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		64E335BF296BE1B0001E2EBC /* HomePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
+		64E335C3296BED88001E2EBC /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		64E335C5296BEDE7001E2EBC /* EditPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPresenter.swift; sourceTree = "<group>"; };
+		64E335C9296BF355001E2EBC /* CreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateView.swift; sourceTree = "<group>"; };
+		64E335CB296BF394001E2EBC /* CreatePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePresenter.swift; sourceTree = "<group>"; };
 		A0E7993296B5BB9D3290D57A /* Pods-Task 1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Task 1.debug.xcconfig"; path = "Target Support Files/Pods-Task 1/Pods-Task 1.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,12 +120,9 @@
 		64965A41296841D0001A077D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
-				64965A4529684208001A077D /* HomeViewController.swift */,
-				64965A4629684208001A077D /* HomeViewController.xib */,
-				64965A49296845BD001A077D /* CreateViewController.swift */,
-				64965A4A296845BD001A077D /* CreateViewController.xib */,
-				64965A4D296845CA001A077D /* EditViewController.swift */,
-				64965A4E296845CA001A077D /* EditViewController.xib */,
+				64E335C1296BE1BC001E2EBC /* edit */,
+				64E335BB296BE18F001E2EBC /* create */,
+				64E335BA296BE17F001E2EBC /* home */,
 				64965A5129684F93001A077D /* BaseViewController.swift */,
 			);
 			path = controllers;
@@ -147,13 +156,69 @@
 			path = apputils;
 			sourceTree = "<group>";
 		};
+		64E335BA296BE17F001E2EBC /* home */ = {
+			isa = PBXGroup;
+			children = (
+				64E335BC296BE19A001E2EBC /* presenter */,
+				64965A4529684208001A077D /* HomeViewController.swift */,
+				64965A4629684208001A077D /* HomeViewController.xib */,
+			);
+			path = home;
+			sourceTree = "<group>";
+		};
+		64E335BB296BE18F001E2EBC /* create */ = {
+			isa = PBXGroup;
+			children = (
+				64E335C7296BF1B0001E2EBC /* presenter */,
+				64965A49296845BD001A077D /* CreateViewController.swift */,
+				64965A4A296845BD001A077D /* CreateViewController.xib */,
+			);
+			path = create;
+			sourceTree = "<group>";
+		};
+		64E335BC296BE19A001E2EBC /* presenter */ = {
+			isa = PBXGroup;
+			children = (
+				64E335BD296BE1A4001E2EBC /* HomeView.swift */,
+				64E335BF296BE1B0001E2EBC /* HomePresenter.swift */,
+			);
+			path = presenter;
+			sourceTree = "<group>";
+		};
+		64E335C1296BE1BC001E2EBC /* edit */ = {
+			isa = PBXGroup;
+			children = (
+				64E335C2296BED7E001E2EBC /* presenter */,
+				64965A4D296845CA001A077D /* EditViewController.swift */,
+				64965A4E296845CA001A077D /* EditViewController.xib */,
+			);
+			path = edit;
+			sourceTree = "<group>";
+		};
+		64E335C2296BED7E001E2EBC /* presenter */ = {
+			isa = PBXGroup;
+			children = (
+				64E335C3296BED88001E2EBC /* EditView.swift */,
+				64E335C5296BEDE7001E2EBC /* EditPresenter.swift */,
+			);
+			path = presenter;
+			sourceTree = "<group>";
+		};
+		64E335C7296BF1B0001E2EBC /* presenter */ = {
+			isa = PBXGroup;
+			children = (
+				64E335C9296BF355001E2EBC /* CreateView.swift */,
+				64E335CB296BF394001E2EBC /* CreatePresenter.swift */,
+			);
+			path = presenter;
+			sourceTree = "<group>";
+		};
 		B9B16CDE38910C29CC701700 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				A0E7993296B5BB9D3290D57A /* Pods-Task 1.debug.xcconfig */,
 				5F84B2AC4110D7CF3665814F /* Pods-Task 1.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -287,12 +352,18 @@
 				64965A4B296845BD001A077D /* CreateViewController.swift in Sources */,
 				640BDF17296941E800EECBBC /* Networking.swift in Sources */,
 				64965A3229684199001A077D /* ViewController.swift in Sources */,
+				64E335C0296BE1B0001E2EBC /* HomePresenter.swift in Sources */,
+				64E335CA296BF355001E2EBC /* CreateView.swift in Sources */,
 				64965A4F296845CA001A077D /* EditViewController.swift in Sources */,
 				64965A2E29684199001A077D /* AppDelegate.swift in Sources */,
+				64E335BE296BE1A4001E2EBC /* HomeView.swift in Sources */,
+				64E335C4296BED88001E2EBC /* EditView.swift in Sources */,
 				64965A54296850FA001A077D /* Contact.swift in Sources */,
 				64965A3029684199001A077D /* SceneDelegate.swift in Sources */,
 				64965A57296851AC001A077D /* ContactTableViewCell.swift in Sources */,
+				64E335CC296BF394001E2EBC /* CreatePresenter.swift in Sources */,
 				64965A5229684F93001A077D /* BaseViewController.swift in Sources */,
+				64E335C6296BEDE7001E2EBC /* EditPresenter.swift in Sources */,
 				64965A4729684208001A077D /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

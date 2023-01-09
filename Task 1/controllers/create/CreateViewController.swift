@@ -7,15 +7,18 @@
 
 import UIKit
 
-class CreateViewController: BaseViewController {
+class CreateViewController: BaseViewController, CreateView {
     
     // MARK: - Outlets
     @IBOutlet weak var etName: UITextField!
     @IBOutlet weak var etNumber: UITextField!
+    
+    var presenter: CreatePresenter!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initViews()
         // Do any additional setup after loading the view.
     }
 
@@ -23,6 +26,11 @@ class CreateViewController: BaseViewController {
 
     func initViews() {
         initNavigation()
+        
+        presenter = CreatePresenter()
+        presenter.view = self
+        presenter.controller = self
+
     }
     
     func initNavigation() {
@@ -31,25 +39,20 @@ class CreateViewController: BaseViewController {
     
     // MARK: - API Calls
     
-    func apiSaveContact(name: String, number: String) {
-        showProgress()
-        Network.post(url: Network.API_CONTACT_CREATE, params: Network.paramsPostCreate(contact: Contact(id: "", name: name, number: number)), handler: { response in
-            self.hideProgress()
-            switch response.result {
-            case .success(let data):
-                print(data)
-                self.navigationController?.popViewController(animated: true)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        })
+    func onCreateContact(created: Bool) {
+        if created {
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            // Error
+            print("Error")
+        }
     }
     
     // MARK: - Actions
     
     @IBAction func onSaveClick(_ sender: Any) {
         if !etName.text!.isEmpty && !etNumber.text!.isEmpty {
-            apiSaveContact(name: etName.text!, number: etNumber.text!)
+            self.presenter.apiCreateContact(name: etName.text!, number: etNumber.text!)
         }
     }
     
