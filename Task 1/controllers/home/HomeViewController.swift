@@ -7,27 +7,13 @@
 
 import UIKit
 
-protocol HomeRequestProtocol {
-    func apiContactList()
-    func apiContactDelete(contact: Contact)
-    
-    func navigateCreateScreen()
-    func navigateEditScreen(contact: Contact)
-}
-
-protocol HomeResponseProtocol {
-    func onContactList(contacts: [Contact])
-    func onContactDelete(deleted: Bool)
-}
-
-class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource, HomeResponseProtocol {
+class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Outlets
     
     @IBOutlet weak var tableView: UITableView!
-    var presenter: HomeRequestProtocol!
     
-    var items: Array<Contact> = Array()
+    var viewModel = HomeViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,23 +24,7 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - API Calls
     
-    func onContactList(contacts: [Contact]) {
-        hideProgress()
-        if contacts.count > 0 {
-            refreshTableView(contacts: contacts)
-        } else {
-            // Error
-        }
-    }
     
-    func onContactDelete(deleted: Bool) {
-        hideProgress()
-        if deleted {
-            presenter.apiContactList()
-        } else {
-            // Error
-        }
-    }
 
 
     // MARK: - Methods
@@ -64,34 +34,20 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
         
+        bindViewModel()
+        
         initNavigation()
-        configureViper()
-        presenter.apiContactList()
+        
+        viewModel.apiContactList()
         
     }
     
-    func configureViper() {
-        let manager = HttpManager()
-        let presenter = HomePresenter()
-        let interactor = HomeInteractor()
-        let routing = HomeRouting()
-        
-        presenter.controller = self
-        
-        self.presenter = presenter
-        presenter.interactor = interactor
-        presenter.routing = routing
-        routing.viewController = self
-        interactor.manager = manager
-        interactor.response = self
-        
+    func bindViewModel() {
+        viewModel.controller = self
+        viewModel.items.bind(to: self) { strongSelf, _ in
+            strongSelf.tableView.reloadData()
+        }
     }
-    
-    func refreshTableView(contacts: [Contact]) {
-        self.items = contacts
-        self.tableView.reloadData()
-    }
-    
     
     func initNavigation() {
         let refresh = UIImage(systemName: "arrow.triangle.2.circlepath")
@@ -99,7 +55,7 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: refresh, style: .plain, target: self, action: #selector(leftTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: add, style: .plain, target: self, action: #selector(rightTapped))
-        title = "Storyboard MVC"
+        title = "Storyboard MVVM"
     }
     
     func callCreateViewController() {
@@ -117,7 +73,7 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     // MARK: - Actions
     
     @objc func leftTapped() {
-        presenter.apiContactList()
+        viewModel.apiContactList()
     }
     
     @objc func rightTapped() {
@@ -127,11 +83,11 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     // MARK: - Table View
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return viewModel.items.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = items[indexPath.row]
+        let item = viewModel.items.value[indexPath.row]
         
         let cell = Bundle.main.loadNibNamed("ContactTableViewCell", owner: self, options: nil)?.first as! ContactTableViewCell
         
@@ -144,13 +100,13 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            makeCompleteContextualAction(forRowAt: indexPath, contact: items[indexPath.row])
+            makeCompleteContextualAction(forRowAt: indexPath, contact: viewModel.items.value[indexPath.row])
         ])
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            makeDeleteContextualAction(forRowAt: indexPath, contact: items[indexPath.row])
+            makeDeleteContextualAction(forRowAt: indexPath, contact: viewModel.items.value[indexPath.row])
         ])
     }
     
@@ -167,7 +123,9 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         return UIContextualAction(style: .destructive, title: "Delete") { (action, swipeButtonView, completion) in
             print("Delete")
             completion(true)
-            self.presenter.apiContactDelete(contact: contact)
+            self.viewModel.apiContactDelete(contact: contact, handler: { response in
+                self.viewModel.apiContactList()
+            })
         }
     }
     

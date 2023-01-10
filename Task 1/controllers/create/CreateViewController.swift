@@ -7,24 +7,14 @@
 
 import UIKit
 
-protocol CreateRequestProtocol {
-    func apiContactCreate(name: String, number: String)
-    
-    func navigateHomeScreen()
-}
-
-protocol CreateResponseProtocol {
-    func onContactCreated(created: Bool)
-}
-
-class CreateViewController: BaseViewController, CreateResponseProtocol {
+class CreateViewController: BaseViewController {
     
     // MARK: - Outlets
     @IBOutlet weak var etName: UITextField!
     @IBOutlet weak var etNumber: UITextField!
     
-    var presenter: CreateRequestProtocol!
-
+    var viewModel = CreateViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -37,25 +27,12 @@ class CreateViewController: BaseViewController, CreateResponseProtocol {
     func initViews() {
         initNavigation()
         
-        configureViper()
+        bindViewModel()
 
     }
     
-    func configureViper() {
-        let manager = HttpManager()
-        let presenter = CreatePresenter()
-        let interactor = CreateInteractor()
-        let routing = CreateRouting()
-        
-        presenter.controller = self
-        
-        self.presenter = presenter
-        presenter.interactor = interactor
-        presenter.routing = routing
-        routing.viewController = self
-        interactor.manager = manager
-        interactor.response = self
-        
+    func bindViewModel() {
+        viewModel.controller = self
     }
     
     func callHomeController() {
@@ -66,22 +43,15 @@ class CreateViewController: BaseViewController, CreateResponseProtocol {
         title = "Create Contact"
     }
     
-    // MARK: - API Calls
-    
-    func onContactCreated(created: Bool) {
-        if created {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            // Error
-            print("Error")
-        }
-    }
-    
     // MARK: - Actions
     
     @IBAction func onSaveClick(_ sender: Any) {
         if !etName.text!.isEmpty && !etNumber.text!.isEmpty {
-            self.presenter.apiContactCreate(name: etName.text!, number: etNumber.text!)
+            viewModel.createContact(name: etName.text!, number: etNumber.text!) { response in
+                if response {
+                    self.callHomeController()
+                }
+            }
         }
     }
     

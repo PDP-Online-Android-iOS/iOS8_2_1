@@ -7,6 +7,7 @@ target 'Task 1' do
 
   pod 'Alamofire'
   pod 'JGProgressHUD' 
+  pod 'Bond'
 
   # Pods for Task 1
 

@@ -1,20 +1,32 @@
 PODS:
   - Alamofire (5.6.4)
+  - Bond (7.8.1):
+    - Differ (~> 1.4)
+    - ReactiveKit (~> 3.14)
+  - Differ (1.4.5)
   - JGProgressHUD (2.2)
+  - ReactiveKit (3.19.1)
 
 DEPENDENCIES:
   - Alamofire
+  - Bond
   - JGProgressHUD
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Bond
+    - Differ
     - JGProgressHUD
+    - ReactiveKit
 
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  Bond: 87075c7f20f37ea3e73dc7057fce839787bf46eb
+  Differ: 3b6bd78e2b20cc795d9a86f7641d087524e4273e
   JGProgressHUD: d83d7a981b85d11205e19ff8ad5bb9c40571c847
+  ReactiveKit: a36ebeb959fe6852dd674cc423163bfffb7e0541
 
-PODFILE CHECKSUM: afcbe65c2b5c5ac72dd01d81efe7d2ff5c3c6743
+PODFILE CHECKSUM: fed4b3864d4ef22ed738a9da7ea90cb41e6fe98d
 
 COCOAPODS: 1.11.3
